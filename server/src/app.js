@@ -19,13 +19,37 @@ export function createApp() {
   app.disable('x-powered-by');
   if (config.env === 'production') app.set('trust proxy', 1);
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
   app.use(
     cors({
       origin(origin, cb) {
-        if (!origin || config.clientOrigins.includes(origin)) return cb(null, true);
+        if (!origin) return cb(null, true);
+        const cleanOrigin = origin.replace(/\/$/, '');
+        if (config.clientOrigins.includes('*') || config.clientOrigins.includes(cleanOrigin)) {
+          return cb(null, true);
+        }
+        try {
+          const { hostname } = new URL(cleanOrigin);
+          const isAllowed = config.clientOrigins.some((allowed) => {
+            if (allowed.startsWith('*.')) {
+              const domain = allowed.slice(2);
+              return hostname === domain || hostname.endsWith(`.${domain}`);
+            }
+            return false;
+          });
+          if (isAllowed) return cb(null, true);
+        } catch {
+          // invalid URL origin
+        }
         cb(null, false);
       },
+      credentials: true,
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       maxAge: 600,
     }),

@@ -3,8 +3,16 @@ import 'dotenv/config';
 const list = (v) =>
   (v ?? '')
     .split(',')
-    .map((s) => s.trim())
+    .map((s) => s.trim().replace(/\/$/, ''))
     .filter(Boolean);
+
+const defaultOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://finenzo.velqisavora.space',
+  '*.velqisavora.space',
+  '*.vercel.app',
+];
 
 export const config = {
   env: process.env.NODE_ENV ?? 'development',
@@ -13,7 +21,7 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET ?? 'dev-only-insecure-secret',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '30d',
   googleClientId: process.env.GOOGLE_CLIENT_ID ?? '',
-  clientOrigins: list(process.env.CLIENT_ORIGIN ?? 'http://localhost:5173'),
+  clientOrigins: Array.from(new Set([...defaultOrigins, ...list(process.env.CLIENT_ORIGIN)])),
   defaultTimezone: process.env.DEFAULT_TIMEZONE ?? 'Asia/Karachi',
 };
 
