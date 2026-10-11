@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 250 249 245;
+  --surface: 255 255 255;
+  --surface-2: 244 242 235;
+  --line: 232 229 220;
+  --ink: 31 30 29;
+  --muted: 112 108 100;
+  --danger: 185 50 40;
+  --danger-soft: 251 236 233;
+  --success: 40 125 84;
+  --success-soft: 232 245 237;
+  --warn: 160 100 10;
+  --warn-soft: 252 243 224;
+  /* Accent tokens are derived at runtime in src/lib/theme.js (defaults = terracotta). */
+  --accent: 217 119 87;
+  --accent-hover: 198 97 63;
+  --accent-soft: 249 235 229;
+  --accent-text: 170 77 44;
+  --on-accent: 31 30 29;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    background: rgb(var(--bg));
+  }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    background: rgb(var(--bg));
+    color: rgb(var(--ink));
+    font-family: 'Inter Variable', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  #root {
+    min-height: 100dvh;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: 'Newsreader Variable', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+  button {
+    font: inherit;
+    cursor: pointer;
+  }
+  input,
+  select,
+  textarea {
+    font: inherit;
+    font-size: 16px; /* prevents zoom on focus */
+  }
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent-text));
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: rgb(var(--accent) / 0.3);
+  }
+}
+
+@layer components {
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1, 'lnum' 1;
+  }
+  .serif-num {
+    font-family: 'Newsreader Variable', Georgia, serif;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-surface shadow-card;
+  }
+  .field {
+    @apply h-12 w-full rounded-xl border border-line bg-surface px-3.5 text-base text-ink outline-none transition placeholder:text-muted/70 focus:border-accent focus:ring-2 focus:ring-accent/30;
+  }
+  textarea.field {
+    @apply h-auto min-h-[7rem] py-3;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-muted;
+  }
+  .btn {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 text-[15px] font-semibold transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-accent text-on-accent hover:bg-accent-hover active:bg-accent-hover;
+  }
+  .btn-soft {
+    @apply bg-accent-soft text-accent-text hover:brightness-95;
+  }
+  .btn-ghost {
+    @apply border border-line bg-surface text-ink hover:bg-surface-2;
+  }
+  .btn-danger {
+    @apply bg-danger-soft text-danger hover:brightness-95;
+  }
+  .chip {
+    @apply inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 text-sm font-medium text-ink transition active:scale-[0.97];
+  }
+  .chip[aria-pressed='true'] {
+    @apply border-accent bg-accent-soft text-accent-text;
+  }
+  .badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold;
+  }
+  .skeleton {
+    @apply relative overflow-hidden rounded-xl bg-surface-2;
+  }
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.65), transparent);
+    animation: shimmer 1.4s infinite;
+  }
+  .pb-nav {
+    padding-bottom: calc(96px + var(--safe-bottom));
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

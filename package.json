@@ -1,0 +1,26 @@
+{
+  "name": "finenzo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Finenzo — mobile-first personal finance app",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,magenta \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client",
+    "start": "npm run start -w server",
+    "test": "npm run test -w server && npm run test -w client",
+    "lint": "eslint server/src server/test client/src",
+    "format": "prettier --write \"server/**/*.js\" \"client/src/**/*.{js,jsx,css}\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2"
+  }
+}
