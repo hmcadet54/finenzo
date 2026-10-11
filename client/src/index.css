@@ -30,6 +30,7 @@
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
     background: rgb(var(--bg));
+    font-size: var(--app-font-size, 16px);
   }
   body {
     margin: 0;
@@ -39,7 +40,7 @@
     background: rgb(var(--bg));
     color: rgb(var(--ink));
     font-family: 'Inter Variable', system-ui, sans-serif;
-    font-size: 16px;
+    font-size: var(--app-font-size, 16px);
     line-height: 1.45;
     -webkit-font-smoothing: antialiased;
   }

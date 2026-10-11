@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ChevronRight, Database, LogOut, Palette, Tags, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
-import { ACCENT_PALETTE, applyAccent } from '../lib/theme.js';
+import { ACCENT_PALETTE, applyAccent, applyFontSize, getStoredFontSize } from '../lib/theme.js';
 import { CURRENCIES } from '../lib/money.js';
 import { PageHeader, Segmented, Toggle, UserAvatar } from '../components/ui.jsx';
 import { useToast } from '../components/Toast.jsx';
@@ -37,6 +37,7 @@ export default function Settings() {
   const s = user.settings;
   const [hex, setHex] = useState(s.accent);
   const [day, setDay] = useState(String(s.cycleStartDay));
+  const [fontSize, setFontSize] = useState(getStoredFontSize);
 
   const update = async (patch) => {
     try {
@@ -87,6 +88,22 @@ export default function Settings() {
             <input className="field num uppercase" value={hex} maxLength={7} onChange={(e) => setAccent(e.target.value.startsWith('#') ? e.target.value : `#${e.target.value}`)} aria-label="Custom hex colour" />
           </label>
           <p className="mt-2 text-xs text-muted">Text on buttons switches between light and dark automatically for readable contrast.</p>
+        </div>
+        <div className="p-4">
+          <p className="mb-2 font-medium">Text size</p>
+          <Segmented
+            label="Text size"
+            value={fontSize}
+            onChange={(v) => {
+              setFontSize(v);
+              applyFontSize(v);
+            }}
+            options={[
+              { value: 'compact', label: 'Compact' },
+              { value: 'normal', label: 'Normal' },
+              { value: 'large', label: 'Large' },
+            ]}
+          />
         </div>
         <div className="p-4">
           <p className="mb-2 font-medium">Number format</p>

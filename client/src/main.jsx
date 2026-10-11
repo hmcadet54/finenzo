@@ -6,13 +6,14 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import '@fontsource-variable/newsreader';
 import '@fontsource-variable/inter';
 import './index.css';
-import { applyStoredAccent } from './lib/theme.js';
+import { applyStoredAccent, applyStoredFontSize } from './lib/theme.js';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ToastProvider } from './components/Toast.jsx';
 import App from './App.jsx';
 
-// Apply the saved accent before first render → no colour flash.
+// Apply the saved accent & font size before first render → no flash.
 applyStoredAccent();
+applyStoredFontSize();
 
 const queryClient = new QueryClient({
   defaultOptions: {

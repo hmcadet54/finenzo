@@ -16,37 +16,48 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-between px-6 py-10" style={{ paddingBottom: 'calc(40px + env(safe-area-inset-bottom))' }}>
-      <div className="pt-6">
-        <Logo size="lg" />
-        <h1 className="mt-10 text-[40px] font-medium leading-[1.05]">
+    <div
+      className="mx-auto flex h-dvh max-h-dvh w-full max-w-md flex-col justify-between overflow-y-auto sm:overflow-visible px-4 py-3 sm:px-6 sm:py-8"
+      style={{
+        paddingTop: 'max(14px, env(safe-area-inset-top))',
+        paddingBottom: 'max(14px, env(safe-area-inset-bottom))',
+      }}
+    >
+      <div className="pt-1 sm:pt-4">
+        <Logo className="scale-90 origin-left sm:scale-100" />
+        <h1 className="mt-3 sm:mt-6 text-[25px] sm:text-[38px] font-medium leading-[1.1] tracking-tight">
           Your money,
           <br />
           <span className="text-accent-text">calmly in order.</span>
         </h1>
-        <p className="mt-4 text-lg text-muted">Monthly balance, daily expenses, subscriptions and loans — in one quiet, fast place.</p>
-        <ul className="mt-8 space-y-3">
+        <p className="mt-1.5 sm:mt-3 text-xs sm:text-base text-muted leading-relaxed">
+          Monthly balance, daily expenses, subscriptions and loans — in one quiet, fast place.
+        </p>
+        <ul className="mt-3 sm:mt-6 space-y-2 sm:space-y-3">
           {POINTS.map(({ icon: Icon, text }) => (
-            <li key={text} className="flex items-center gap-3 text-[15px]">
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-accent-soft text-accent-text">
-                <Icon size={19} />
+            <li key={text} className="flex items-center gap-2.5 sm:gap-3 text-xs sm:text-[15px]">
+              <span className="grid h-7 w-7 sm:h-9 sm:w-9 place-items-center rounded-full bg-accent-soft text-accent-text shrink-0">
+                <Icon size={14} className="sm:hidden" />
+                <Icon size={18} className="hidden sm:block" />
               </span>
-              {text}
+              <span>{text}</span>
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="mt-12">
-        <div className="card p-5">
-          <p className="mb-4 text-center text-sm text-muted">Sign in or create your account with Google</p>
-          <div className={`flex min-h-[44px] justify-center ${busy ? 'pointer-events-none opacity-60' : ''}`}>
+      <div className="mt-3 sm:mt-8">
+        <div className="card p-3.5 sm:p-5">
+          <p className="mb-2.5 sm:mb-4 text-center text-xs sm:text-sm text-muted">
+            Sign in or create your account with Google
+          </p>
+          <div className={`flex min-h-[40px] justify-center ${busy ? 'pointer-events-none opacity-60' : ''}`}>
             <GoogleLogin
               theme="outline"
               size="large"
               shape="pill"
               text="continue_with"
-              width="280"
+              width="260"
               onSuccess={async (res) => {
                 setBusy(true);
                 setError('');
@@ -61,12 +72,14 @@ export default function Login() {
             />
           </div>
           {error && (
-            <p className="mt-3 text-center text-sm text-danger" role="alert">
+            <p className="mt-2 text-center text-xs sm:text-sm text-danger" role="alert">
               {error}
             </p>
           )}
         </div>
-        <p className="mt-4 text-center text-xs text-muted">We only store your name, email and picture from Google.</p>
+        <p className="mt-2 sm:mt-3 text-center text-[11px] sm:text-xs text-muted">
+          We only store your name, email and picture from Google.
+        </p>
       </div>
     </div>
   );

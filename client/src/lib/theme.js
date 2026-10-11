@@ -72,3 +72,25 @@ export function applyAccent(hex, { persist = true } = {}) {
 export function applyStoredAccent() {
   applyAccent(localStorage.getItem(STORAGE_KEY) || DEFAULT_ACCENT, { persist: false });
 }
+
+const FONT_SIZE_KEY = 'finenzo.fontSize';
+export const FONT_SIZES = [
+  { value: 'compact', label: 'Compact', size: '14px' },
+  { value: 'normal', label: 'Normal', size: '16px' },
+  { value: 'large', label: 'Large', size: '18px' },
+];
+
+export function applyFontSize(sizeKey, { persist = true } = {}) {
+  const found = FONT_SIZES.find((f) => f.value === sizeKey) ?? FONT_SIZES[1];
+  document.documentElement.style.setProperty('--app-font-size', found.size);
+  if (persist) localStorage.setItem(FONT_SIZE_KEY, found.value);
+}
+
+export function getStoredFontSize() {
+  return localStorage.getItem(FONT_SIZE_KEY) || 'normal';
+}
+
+export function applyStoredFontSize() {
+  applyFontSize(getStoredFontSize(), { persist: false });
+}
+
