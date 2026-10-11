@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AlertTriangle, CheckCircle2, X } from 'lucide-react';
 import Sheet from '../components/Sheet.jsx';
+import { Checkbox, DatePicker } from '../components/ui.jsx';
 import { useToast } from '../components/Toast.jsx';
 import { api, useApi } from '../lib/queries.js';
 import { describeExpression, formatMoney, parseAmount } from '../lib/money.js';
@@ -96,12 +97,13 @@ function BulkForm({ onClose }) {
         </p>
       )}
       {result.startingBalance && (
-        <label className="card flex min-h-[44px] items-center gap-3 p-3 text-sm">
-          <input type="checkbox" className="h-5 w-5 accent-[rgb(var(--accent))]" checked={applyStart} onChange={(e) => setApplyStart(e.target.checked)} />
-          <span>
-            Set starting balance to <strong>{describeExpression(result.startingBalance.expression, { compact: false })}</strong>
-          </span>
-        </label>
+        <div className="card flex min-h-[44px] items-center p-3 text-sm">
+          <Checkbox checked={applyStart} onChange={setApplyStart}>
+            <span>
+              Set starting balance to <strong>{describeExpression(result.startingBalance.expression, { compact: false })}</strong>
+            </span>
+          </Checkbox>
+        </div>
       )}
       <ul className="space-y-2">
         {rows.map((r) => {
@@ -118,12 +120,12 @@ function BulkForm({ onClose }) {
                   <X size={18} />
                 </button>
               </div>
-              <input type="date" className="field !h-10 mt-2 text-sm" value={r.date} onChange={(e) => edit(r.key, { date: e.target.value })} aria-label="Date" />
+              <DatePicker compact className="mt-2" value={r.date} onChange={(val) => edit(r.key, { date: val })} aria-label="Date" />
             </li>
           );
         })}
       </ul>
-      <div className="sticky bottom-0 -mx-5 flex gap-2 bg-bg px-5 pb-1 pt-3">
+      <div className="sticky bottom-0 -mx-5 flex gap-2 bg-bg px-5 pt-3" style={{ paddingBottom: 'max(18px, calc(10px + env(safe-area-inset-bottom)))' }}>
         <button className="btn btn-ghost" onClick={() => setResult(null)}>
           Back
         </button>

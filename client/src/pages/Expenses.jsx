@@ -4,7 +4,7 @@ import { useCycle } from '../context/CycleContext.jsx';
 import { api, useCategories, useExpenses, useIncome } from '../lib/queries.js';
 import { dayHeading } from '../lib/dates.js';
 import { useUndoDelete, useHiddenIds } from '../lib/undo.js';
-import { CategoryDot, EmptyState, ErrorState, ListSkeleton, Money, PageHeader, Segmented } from '../components/ui.jsx';
+import { CategoryDot, DatePicker, EmptyState, ErrorState, ListSkeleton, Money, PageHeader, Segmented } from '../components/ui.jsx';
 import SwipeRow from '../components/SwipeRow.jsx';
 import { useQuickAdd } from '../components/Layout.jsx';
 import ExpenseSheet from '../forms/ExpenseSheet.jsx';
@@ -104,8 +104,14 @@ export default function Expenses() {
                 ))}
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <label><span className="label">From</span><input type="date" className="field" value={from} onChange={(e) => setFrom(e.target.value)} /></label>
-                <label><span className="label">To</span><input type="date" className="field" value={to} onChange={(e) => setTo(e.target.value)} /></label>
+                <div>
+                  <span className="label">From</span>
+                  <DatePicker value={from} onChange={setFrom} clearable placeholder="Start date" compact />
+                </div>
+                <div>
+                  <span className="label">To</span>
+                  <DatePicker value={to} onChange={setTo} min={from} clearable placeholder="End date" compact />
+                </div>
               </div>
               {activeFilters > 0 && (
                 <button className="btn btn-ghost w-full" onClick={() => { setCategoryId(''); setFrom(''); setTo(''); }}>Clear filters</button>

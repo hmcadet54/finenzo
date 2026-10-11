@@ -34,7 +34,7 @@ function useOnline() {
 }
 
 const tabClass = ({ isActive }) =>
-  `flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[11px] font-semibold transition ${
+  `flex min-h-[58px] pt-1.5 pb-2 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold transition ${
     isActive ? 'text-accent-text' : 'text-muted'
   }`;
 
@@ -97,7 +97,7 @@ export default function Layout() {
         <nav
           aria-label="Main"
           className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 backdrop-blur lg:hidden"
-          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+          style={{ paddingBottom: 'max(10px, env(safe-area-inset-bottom))' }}
         >
           <div className="mx-auto grid max-w-[640px] grid-cols-5 items-end">
             {NAV.slice(0, 2).map(({ to, label, icon: Icon, end }) => (

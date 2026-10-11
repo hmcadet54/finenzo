@@ -1,5 +1,38 @@
-import { AlertTriangle, Inbox, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Check, Inbox, RefreshCw } from 'lucide-react';
 import { useFmt } from '../context/AuthContext.jsx';
+
+export { default as DatePicker } from './DatePicker.jsx';
+
+export function Checkbox({ checked, onChange, disabled = false, className = '', label, children, id }) {
+  return (
+    <label className={`inline-flex items-center gap-3 cursor-pointer select-none ${disabled ? 'opacity-50 pointer-events-none' : ''} ${className}`}>
+      <span
+        role="checkbox"
+        tabIndex={disabled ? -1 : 0}
+        aria-checked={checked}
+        id={id}
+        onKeyDown={(e) => {
+          if (!disabled && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            onChange?.(!checked);
+          }
+        }}
+        onClick={(e) => {
+          e.preventDefault();
+          if (!disabled) onChange?.(!checked);
+        }}
+        className={`grid h-5 w-5 shrink-0 place-items-center rounded-md border transition-all ${
+          checked
+            ? 'border-accent bg-accent text-on-accent shadow-sm'
+            : 'border-line bg-surface hover:border-muted'
+        }`}
+      >
+        {checked && <Check size={13} strokeWidth={3} className="text-white mix-blend-difference" />}
+      </span>
+      {(label || children) && <span className="text-sm font-medium text-ink">{label || children}</span>}
+    </label>
+  );
+}
 
 export const Skeleton = ({ className = 'h-5 w-full' }) => <div className={`skeleton ${className}`} aria-hidden />;
 

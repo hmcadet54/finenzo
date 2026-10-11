@@ -39,13 +39,13 @@ export default function Sheet({ open, onClose, title, children, footer }) {
             <X size={20} />
           </button>
         </header>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-6">{children}</div>
         {footer && (
-          <footer className="shrink-0 border-t border-line bg-bg px-5 pt-3" style={{ paddingBottom: 'calc(12px + env(safe-area-inset-bottom))' }}>
+          <footer className="shrink-0 border-t border-line bg-bg px-5 pt-3" style={{ paddingBottom: 'max(20px, calc(14px + env(safe-area-inset-bottom)))' }}>
             {footer}
           </footer>
         )}
-        {!footer && <div style={{ height: 'env(safe-area-inset-bottom)' }} />}
+        {!footer && <div style={{ height: 'max(14px, env(safe-area-inset-bottom))' }} />}
       </div>
     </div>
   );

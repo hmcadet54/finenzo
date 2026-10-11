@@ -20,7 +20,7 @@ export default function Login() {
       className="mx-auto flex h-dvh max-h-dvh w-full max-w-md flex-col justify-between overflow-y-auto sm:overflow-visible px-4 py-3 sm:px-6 sm:py-8"
       style={{
         paddingTop: 'max(14px, env(safe-area-inset-top))',
-        paddingBottom: 'max(14px, env(safe-area-inset-bottom))',
+        paddingBottom: 'max(24px, calc(16px + env(safe-area-inset-bottom)))',
       }}
     >
       <div className="pt-1 sm:pt-4">

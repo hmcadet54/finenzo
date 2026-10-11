@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import Sheet from '../components/Sheet.jsx';
 import AmountInput from '../components/AmountInput.jsx';
-import { Field, Segmented, Toggle } from '../components/ui.jsx';
+import { DatePicker, Field, Segmented, Toggle } from '../components/ui.jsx';
 import { useToast } from '../components/Toast.jsx';
 import { api, useApi } from '../lib/queries.js';
 import { parseAmount } from '../lib/money.js';
@@ -35,7 +35,7 @@ function FriendForm({ friend, onClose }) {
       <Field label="Name"><input className="field" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} autoFocus={!friend} /></Field>
       <Field label="Phone (optional)" hint="Used to open WhatsApp reminders. Include country code, e.g. 923001234567."><input className="field" type="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={30} /></Field>
       <Field label="Note (optional)"><input className="field" value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} /></Field>
-      <div className="flex gap-2">
+      <div className="flex gap-2 pt-2" style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}>
         {friend && (
           <button
             type="button"
@@ -95,8 +95,12 @@ function LoanForm({ friendId, loan, onClose }) {
       <Segmented label="Direction" value={direction} onChange={setDirection} options={[{ value: 'lent', label: 'I lent' }, { value: 'borrowed', label: 'I borrowed' }]} />
       <AmountInput value={amount} onChange={setAmount} autoFocus={!editing} />
       <div className="grid grid-cols-2 gap-3">
-        <Field label={direction === 'lent' ? 'Date lent' : 'Date borrowed'}><input type="date" className="field" value={dateLent} onChange={(e) => setDateLent(e.target.value)} /></Field>
-        <Field label="Expected return"><input type="date" className="field" value={expected} min={dateLent} onChange={(e) => setExpected(e.target.value)} /></Field>
+        <Field label={direction === 'lent' ? 'Date lent' : 'Date borrowed'}>
+          <DatePicker value={dateLent} onChange={setDateLent} />
+        </Field>
+        <Field label="Expected return">
+          <DatePicker value={expected} min={dateLent} onChange={setExpected} clearable placeholder="Optional" />
+        </Field>
       </div>
       <Field label="Note (optional)"><input className="field" value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} /></Field>
       {!editing && (
@@ -104,7 +108,7 @@ function LoanForm({ friendId, loan, onClose }) {
           <Toggle checked={linked} onChange={setLinked} label={direction === 'lent' ? 'Also record as an expense' : 'Also record as income'} description={direction === 'lent' ? 'Subtracts it from this cycle’s balance' : 'Adds it to this cycle’s balance'} />
         </div>
       )}
-      <div className="flex gap-2">
+      <div className="flex gap-2 pt-2" style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}>
         {editing && (
           <button
             type="button"
@@ -158,12 +162,16 @@ function RepaymentForm({ loan, onClose }) {
     >
       <AmountInput label={lent ? 'Amount received' : 'Amount repaid'} value={amount} onChange={setAmount} autoFocus />
       {v > loan.outstanding && <p className="text-sm text-danger" role="alert">That’s more than the outstanding {loan.outstanding.toLocaleString()}.</p>}
-      <Field label="Date"><input type="date" className="field" value={date} onChange={(e) => setDate(e.target.value)} /></Field>
+      <Field label="Date">
+        <DatePicker value={date} onChange={setDate} />
+      </Field>
       <Field label="Note (optional)"><input className="field" value={note} onChange={(e) => setNote(e.target.value)} maxLength={300} /></Field>
       <div className="card overflow-hidden">
         <Toggle checked={linked} onChange={setLinked} label={lent ? 'Add to my balance as income' : 'Record as an expense'} description={lent ? 'The money is credited back into this cycle' : 'Subtracts it from this cycle’s balance'} />
       </div>
-      <button className="btn btn-primary w-full" disabled={!ok || save.isPending}>Record repayment</button>
+      <div className="pt-2" style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}>
+        <button className="btn btn-primary w-full" disabled={!ok || save.isPending}>Record repayment</button>
+      </div>
     </form>
   );
 }

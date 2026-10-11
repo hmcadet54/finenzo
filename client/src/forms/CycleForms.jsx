@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import Sheet from '../components/Sheet.jsx';
 import AmountInput from '../components/AmountInput.jsx';
-import { Field } from '../components/ui.jsx';
+import { Checkbox, DatePicker, Field } from '../components/ui.jsx';
 import { useToast } from '../components/Toast.jsx';
 import { useCycle } from '../context/CycleContext.jsx';
 import { api, useApi } from '../lib/queries.js';
@@ -58,9 +58,11 @@ function StartingForm({ cycle, onClose }) {
     >
       <p className="text-sm text-muted">Add up several sources if you like — e.g. <code className="rounded bg-surface-2 px-1">122K + 30k + 30k</code>. We’ll keep the breakdown visible.</p>
       <AmountInput label="Starting balance" value={expr} onChange={setExpr} allowNegative autoFocus />
-      <button className="btn btn-primary w-full" disabled={!ok || save.isPending}>
-        Save
-      </button>
+      <div className="pt-2" style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}>
+        <button className="btn btn-primary w-full" disabled={!ok || save.isPending}>
+          Save
+        </button>
+      </div>
     </form>
   );
 }
@@ -100,9 +102,9 @@ function IncomeForm({ income, onClose }) {
         <input className="field" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Salary bonus, refund, top-up…" maxLength={120} />
       </Field>
       <Field label="Date">
-        <input type="date" className="field" value={date} onChange={(e) => setDate(e.target.value)} />
+        <DatePicker value={date} onChange={setDate} />
       </Field>
-      <div className="flex gap-2">
+      <div className="flex gap-2 pt-2" style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}>
         {income && (
           <button
             type="button"
@@ -147,16 +149,19 @@ function CloseForm({ cycle, remaining, onClose }) {
   return (
     <div className="space-y-4 pb-2">
       <p className="text-sm text-muted">This closes <strong>{cycleLabel(cycle)}</strong> and opens the next cycle. Past cycles stay available to view and edit.</p>
-      <label className="card flex min-h-[56px] items-center gap-3 p-3">
-        <input type="checkbox" className="h-5 w-5 accent-[rgb(var(--accent))]" checked={carry} onChange={(e) => setCarry(e.target.checked)} />
-        <span>
-          Carry over remaining balance
-          <span className="block text-sm text-muted">{remaining} becomes the next starting balance</span>
-        </span>
-      </label>
-      <button className="btn btn-primary w-full" disabled={close.isPending} onClick={() => close.mutate({ carryOver: carry })}>
-        Close cycle &amp; start next
-      </button>
+      <div className="card flex min-h-[56px] items-center p-3">
+        <Checkbox checked={carry} onChange={setCarry}>
+          <span>
+            Carry over remaining balance
+            <span className="block text-sm text-muted font-normal">{remaining} becomes the next starting balance</span>
+          </span>
+        </Checkbox>
+      </div>
+      <div className="pt-2" style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}>
+        <button className="btn btn-primary w-full" disabled={close.isPending} onClick={() => close.mutate({ carryOver: carry })}>
+          Close cycle &amp; start next
+        </button>
+      </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Copy, Trash2 } from 'lucide-react';
 import Sheet from '../components/Sheet.jsx';
 import AmountInput from '../components/AmountInput.jsx';
-import { Field } from '../components/ui.jsx';
+import { DatePicker, Field } from '../components/ui.jsx';
 import { useToast } from '../components/Toast.jsx';
 import { api, useAddExpense, useApi, useCategories } from '../lib/queries.js';
 import { parseAmount } from '../lib/money.js';
@@ -73,7 +73,7 @@ function ExpenseForm({ expense, onClose }) {
         <input className="field" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="What was it for?" maxLength={120} enterKeyHint="next" />
       </Field>
       <Field label="Date">
-        <input type="date" className="field" value={date} onChange={(e) => setDate(e.target.value)} required />
+        <DatePicker value={date} onChange={setDate} required />
       </Field>
       <div>
         <span className="label">Category</span>
@@ -87,7 +87,7 @@ function ExpenseForm({ expense, onClose }) {
           {error}
         </p>
       )}
-      <div className="sticky bottom-0 -mx-5 flex gap-2 bg-bg px-5 pb-1 pt-3">
+      <div className="sticky bottom-0 -mx-5 flex gap-2 bg-bg px-5 pt-3" style={{ paddingBottom: 'max(18px, calc(10px + env(safe-area-inset-bottom)))' }}>
         {editing && (
           <>
             <button type="button" className="btn btn-danger" onClick={remove} aria-label="Delete expense">

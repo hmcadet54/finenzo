@@ -3,7 +3,7 @@ import { Ban, Pause, Play, Plus, SkipForward, Trash2, X, CheckCircle2 } from 'lu
 import { getDate, getMonth, getYear, parseISO } from 'date-fns';
 import Sheet from '../components/Sheet.jsx';
 import AmountInput from '../components/AmountInput.jsx';
-import { Field, Money } from '../components/ui.jsx';
+import { DatePicker, Field, Money } from '../components/ui.jsx';
 import { useToast } from '../components/Toast.jsx';
 import { CategoryPicker } from './ExpenseSheet.jsx';
 import { api, useApi } from '../lib/queries.js';
@@ -118,7 +118,7 @@ function SubForm({ sub, onClose }) {
       )}
       {['quarterly', 'yearly', 'custom'].includes(billingCycle) && (
         <Field label="Next charge date">
-          <input type="date" className="field" value={date} onChange={(e) => setDate(e.target.value)} />
+          <DatePicker value={date} onChange={setDate} />
         </Field>
       )}
 
@@ -175,7 +175,7 @@ function SubForm({ sub, onClose }) {
         </div>
       )}
 
-      <div className="sticky bottom-0 -mx-5 flex gap-2 bg-bg px-5 pb-1 pt-3">
+      <div className="sticky bottom-0 -mx-5 flex gap-2 bg-bg px-5 pt-3" style={{ paddingBottom: 'max(18px, calc(10px + env(safe-area-inset-bottom)))' }}>
         {editing && (
           <button
             type="button"
