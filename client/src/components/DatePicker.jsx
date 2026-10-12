@@ -73,6 +73,7 @@ export default function DatePicker({
   const inputId = id || generatedId;
   const containerRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const [alignRight, setAlignRight] = useState(false);
 
   const selectedDate = useMemo(() => parseDateStr(value), [value]);
   const initialView = selectedDate || new Date();
@@ -80,15 +81,25 @@ export default function DatePicker({
   const [viewMonth, setViewMonth] = useState(initialView.getMonth());
 
   useEffect(() => {
-    if (selectedDate) {
-      setViewYear(selectedDate.getFullYear());
-      setViewMonth(selectedDate.getMonth());
+    if (open) {
+      const target = parseDateStr(value) || new Date();
+      setViewYear(target.getFullYear());
+      setViewMonth(target.getMonth());
+      if (containerRef.current && typeof window !== 'undefined') {
+        const rect = containerRef.current.getBoundingClientRect();
+        if (rect.left + 320 > window.innerWidth && rect.right - 320 >= 0) {
+          setAlignRight(true);
+        } else {
+          setAlignRight(false);
+        }
+      }
     }
-  }, [value]);
+  }, [open, value]);
 
   useEffect(() => {
     if (!open) return;
     const handleClickOutside = (e) => {
+      if (e.target && !document.contains(e.target)) return;
       if (containerRef.current && !containerRef.current.contains(e.target)) {
         setOpen(false);
       }
@@ -180,44 +191,53 @@ export default function DatePicker({
   };
 
   return (
-    <div ref={containerRef} className={`relative w-full ${className}`}>
+    <div ref={containerRef} className={`relative w-full ${open ? 'z-40' : ''} ${className}`}>
       {/* Trigger Button */}
-      <div
-        role="button"
-        tabIndex={disabled ? -1 : 0}
-        id={inputId}
-        aria-label={ariaLabel || placeholder}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        aria-disabled={disabled}
-        onClick={() => !disabled && setOpen((o) => !o)}
-        onKeyDown={(e) => {
-          if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+      <div className="relative flex w-full items-center">
+        <button
+          type="button"
+          disabled={disabled}
+          id={inputId}
+          aria-label={ariaLabel || placeholder}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          aria-disabled={disabled}
+          onClick={(e) => {
             e.preventDefault();
-            setOpen((o) => !o);
-          }
-        }}
-        className={`field flex cursor-pointer items-center justify-between text-left select-none transition-all ${
-          compact ? '!h-10 text-sm px-3' : '!h-12'
-        } ${open ? 'border-accent ring-2 ring-accent/30' : ''} ${
-          disabled ? 'opacity-50 pointer-events-none' : ''
-        }`}
-      >
-        <span className="flex items-center gap-2.5 truncate">
-          <CalendarIcon size={compact ? 16 : 18} className="text-accent-text shrink-0" />
-          <span className={`truncate ${value ? 'text-ink font-medium' : 'text-muted/70'}`}>
-            {value ? (compact ? value : formatDisplayDate(value)) : placeholder}
+            e.stopPropagation();
+            if (!disabled) setOpen((o) => !o);
+          }}
+          onKeyDown={(e) => {
+            if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              e.stopPropagation();
+              setOpen((o) => !o);
+            }
+          }}
+          className={`field flex w-full cursor-pointer items-center justify-between text-left select-none transition-all ${
+            compact ? '!h-10 text-sm px-3' : '!h-12'
+          } ${clearable && value && !required && !disabled ? (compact ? 'pr-8' : 'pr-9') : ''} ${
+            open ? 'border-accent ring-2 ring-accent/30' : ''
+          } ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
+        >
+          <span className="flex items-center gap-2.5 truncate">
+            <CalendarIcon size={compact ? 16 : 18} className="text-accent-text shrink-0" />
+            <span className={`truncate ${value ? 'text-ink font-medium' : 'text-muted/70'}`}>
+              {value ? (compact ? value : formatDisplayDate(value)) : placeholder}
+            </span>
           </span>
-        </span>
+        </button>
         {clearable && value && !required && !disabled && (
           <button
             type="button"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               onChange('');
             }}
-            className="grid h-6 w-6 place-items-center rounded-full text-muted hover:bg-surface-2 hover:text-ink shrink-0 ml-1"
+            className="absolute right-2.5 grid h-6 w-6 place-items-center rounded-full text-muted hover:bg-surface-2 hover:text-ink shrink-0"
             title="Clear date"
+            aria-label="Clear date"
           >
             <X size={14} />
           </button>
@@ -233,7 +253,10 @@ export default function DatePicker({
           role="dialog"
           aria-modal="true"
           aria-label="Choose date"
-          className="card absolute left-0 right-auto z-50 mt-1.5 w-[310px] sm:w-[320px] p-3.5 shadow-2xl animate-in fade-in zoom-in-95 duration-150 border border-line bg-surface"
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          className={`card absolute ${alignRight ? 'right-0 left-auto' : 'left-0 right-auto'} z-50 mt-1.5 w-[310px] sm:w-[320px] p-3.5 shadow-2xl animate-in fade-in zoom-in-95 duration-150 border border-line bg-surface`}
           style={{ maxWidth: 'min(92vw, 340px)' }}
         >
           {/* Quick shortcuts */}

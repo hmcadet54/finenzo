@@ -68,7 +68,7 @@ function ExpenseForm({ expense, onClose }) {
 
   return (
     <form onSubmit={submit} className="space-y-4 pb-2" noValidate>
-      <AmountInput value={amount} onChange={setAmount} autoFocus={!editing} />
+      <AmountInput value={amount} onChange={setAmount} autoFocus={false} />
       <Field label="Label">
         <input className="field" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="What was it for?" maxLength={120} enterKeyHint="next" />
       </Field>
@@ -108,7 +108,7 @@ function ExpenseForm({ expense, onClose }) {
 
 export default function ExpenseSheet({ open, onClose, expense }) {
   return (
-    <Sheet open={open} onClose={onClose} title={expense ? 'Edit expense' : 'Add expense'}>
+    <Sheet open={open} onClose={onClose} title={expense ? 'Edit expense' : 'Add expense'} autoFocus={false}>
       <ExpenseForm expense={expense} onClose={onClose} />
     </Sheet>
   );

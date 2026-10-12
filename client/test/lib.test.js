@@ -31,3 +31,19 @@ describe('accent theme', () => {
     expect(hexToRgb('#D97757')).toEqual([217, 119, 87]);
   });
 });
+
+import { parseDateStr, toDateStr } from '../src/components/DatePicker.jsx';
+
+describe('date picker helpers', () => {
+  it('formats Date instance to YYYY-MM-DD string', () => {
+    const d = new Date(2026, 9, 12);
+    expect(toDateStr(d)).toBe('2026-10-12');
+  });
+  it('parses YYYY-MM-DD string into valid Date', () => {
+    const d = parseDateStr('2026-10-12');
+    expect(d).not.toBeNull();
+    expect(d.getFullYear()).toBe(2026);
+    expect(d.getMonth()).toBe(9);
+    expect(d.getDate()).toBe(12);
+  });
+});

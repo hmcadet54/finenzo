@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
 /** Bottom sheet on mobile, centred dialog on desktop. */
-export default function Sheet({ open, onClose, title, children, footer }) {
+export default function Sheet({ open, onClose, title, children, footer, autoFocus = false }) {
   const panel = useRef(null);
 
   useEffect(() => {
@@ -12,14 +12,16 @@ export default function Sheet({ open, onClose, title, children, footer }) {
     document.addEventListener('keydown', onKey);
     const { overflow } = document.body.style;
     document.body.style.overflow = 'hidden';
-    const t = setTimeout(() => panel.current?.querySelector('input,textarea,select')?.focus({ preventScroll: true }), 120);
+    const t = autoFocus
+      ? setTimeout(() => panel.current?.querySelector('input,textarea,select')?.focus({ preventScroll: true }), 120)
+      : null;
     return () => {
-      clearTimeout(t);
+      if (t) clearTimeout(t);
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = overflow;
       prev?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open, onClose, autoFocus]);
 
   if (!open) return null;
   return (
