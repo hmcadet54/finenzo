@@ -1,7 +1,143 @@
-import { AlertTriangle, Check, Inbox, RefreshCw } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { AlertTriangle, Check, ChevronDown, Inbox, RefreshCw, Repeat } from 'lucide-react';
 import { useFmt } from '../context/AuthContext.jsx';
 
 export { default as DatePicker } from './DatePicker.jsx';
+
+export function ThemedSelect({
+  value,
+  onChange,
+  options = [],
+  placeholder = 'Select an option…',
+  className = '',
+  disabled = false,
+  ariaLabel,
+}) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [open]);
+
+  const selectedOption = options.find((o) => o.value === value);
+
+  return (
+    <div ref={containerRef} className={`relative w-full ${className}`}>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setOpen((prev) => !prev)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={ariaLabel || placeholder}
+        className="field flex items-center justify-between gap-2 text-left cursor-pointer select-none focus:outline-none"
+      >
+        <span className="truncate flex items-center gap-2 flex-1">
+          {selectedOption ? (
+            <>
+              {selectedOption.icon}
+              <span className="font-medium text-ink truncate">{selectedOption.label}</span>
+              {selectedOption.badge && (
+                <span className="badge bg-surface-2 text-muted text-[11px] ml-1 shrink-0">
+                  {selectedOption.badge}
+                </span>
+              )}
+            </>
+          ) : (
+            <span className="text-muted/70">{placeholder}</span>
+          )}
+        </span>
+        <ChevronDown
+          size={18}
+          className={`shrink-0 text-muted transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+        />
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          className="card absolute left-0 right-0 top-full z-50 mt-1.5 max-h-60 overflow-y-auto p-1.5 shadow-xl border border-line bg-surface animate-fade-in"
+        >
+          {options.map((opt) => {
+            const isSelected = opt.value === value;
+            return (
+              <button
+                key={opt.value ?? '__empty__'}
+                type="button"
+                role="option"
+                aria-selected={isSelected}
+                onClick={() => {
+                  onChange?.(opt.value);
+                  setOpen(false);
+                }}
+                className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-left text-sm transition select-none ${
+                  isSelected
+                    ? 'bg-accent-soft text-accent-text font-semibold'
+                    : 'text-ink hover:bg-surface-2 active:bg-surface-2'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  {opt.icon}
+                  <div className="truncate min-w-0">
+                    <p className="truncate font-medium">{opt.label}</p>
+                    {opt.subLabel && <p className="truncate text-xs text-muted">{opt.subLabel}</p>}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {opt.badge && (
+                    <span className="badge bg-surface-2 text-muted text-[10px]">
+                      {opt.badge}
+                    </span>
+                  )}
+                  {isSelected && <Check size={16} className="text-accent-text shrink-0" />}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function SubscriptionTag({ subscription, name, isManual, isPaid, className = '' }) {
+  const subName = name || subscription?.name || 'Subscription';
+  const color = subscription?.color || '#D97757';
+  return (
+    <span
+      className={`clay-tag inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${className}`}
+      style={{
+        backgroundColor: `${color}18`,
+        color: color,
+        border: `1px solid ${color}35`,
+      }}
+      title={`Attached to subscription: ${subName}`}
+    >
+      <Repeat size={11} strokeWidth={2.5} className="shrink-0" />
+      <span className="truncate max-w-[130px]">{subName}</span>
+      {isPaid && (
+        <span
+          className="ml-0.5 rounded px-1 text-[10px] font-bold uppercase tracking-wider"
+          style={{ backgroundColor: `${color}25` }}
+        >
+          Paid
+        </span>
+      )}
+    </span>
+  );
+}
 
 export function Checkbox({ checked, onChange, disabled = false, className = '', label, children, id }) {
   return (

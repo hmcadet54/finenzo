@@ -93,31 +93,62 @@ export default function Layout() {
           </main>
         </div>
 
-        {/* Mobile tab bar */}
+        {/* Mobile floating control dock */}
         <nav
           aria-label="Main"
-          className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 backdrop-blur lg:hidden"
-          style={{ paddingBottom: 'max(10px, env(safe-area-inset-bottom))' }}
+          className="fixed inset-x-3 bottom-2.5 z-40 max-w-[420px] mx-auto rounded-2xl border border-line/80 bg-surface/90 backdrop-blur-xl shadow-lg lg:hidden"
+          style={{
+            marginBottom: 'max(4px, env(safe-area-inset-bottom))',
+          }}
         >
-          <div className="mx-auto grid max-w-[640px] grid-cols-5 items-end">
+          <div className="flex items-center justify-around px-2 py-1.5">
             {NAV.slice(0, 2).map(({ to, label, icon: Icon, end }) => (
-              <NavLink key={to} to={to} end={end} className={tabClass}>
-                <Icon size={22} /> {label}
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                className={({ isActive }) =>
+                  `flex flex-1 flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all duration-150 select-none ${
+                    isActive
+                      ? 'bg-accent-soft text-accent-text font-bold'
+                      : 'text-muted hover:text-ink hover:bg-surface-2'
+                  }`
+                }
+              >
+                <Icon size={20} strokeWidth={2.2} />
+                <span className="text-[11px] mt-0.5 tracking-tight leading-none">{label}</span>
               </NavLink>
             ))}
-            <div className="flex justify-center">
+
+            {/* Center Floating Action Button */}
+            <div className="flex items-center justify-center px-1">
               <button
                 onClick={openAdd}
                 aria-label="Add expense"
                 id="fab-add"
-                className="-mt-6 grid h-14 w-14 place-items-center rounded-full bg-accent text-on-accent shadow-pop ring-4 ring-bg transition active:scale-95"
+                className="grid h-11 w-11 place-items-center rounded-xl bg-accent text-on-accent transition active:scale-95"
+                title="Add expense"
               >
-                <Plus size={28} strokeWidth={2.4} />
+                <Plus size={24} strokeWidth={2.6} />
               </button>
             </div>
+
             {NAV.slice(2).map(({ to, label, icon: Icon }) => (
-              <NavLink key={to} to={to} className={tabClass}>
-                <Icon size={22} /> {label === 'Subscriptions' ? 'Subs' : label}
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  `flex flex-1 flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all duration-150 select-none ${
+                    isActive
+                      ? 'bg-accent-soft text-accent-text font-bold'
+                      : 'text-muted hover:text-ink hover:bg-surface-2'
+                  }`
+                }
+              >
+                <Icon size={20} strokeWidth={2.2} />
+                <span className="text-[11px] mt-0.5 tracking-tight leading-none">
+                  {label === 'Subscriptions' ? 'Subs' : label}
+                </span>
               </NavLink>
             ))}
           </div>

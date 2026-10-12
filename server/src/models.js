@@ -36,6 +36,8 @@ export const User = mk(
       cycleStartDay: { type: Number, default: 1, min: 1, max: 31 },
       autoPostSubscriptions: { type: Boolean, default: false },
       timezone: { type: String, default: 'Asia/Karachi' },
+      themeMode: { type: String, enum: ['light', 'dark', 'system'], default: 'system' },
+      bg: { type: String, default: '' },
     },
   },
   [],

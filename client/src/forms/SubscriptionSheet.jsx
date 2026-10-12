@@ -18,7 +18,13 @@ const CYCLES = [
   { value: 'custom', label: 'Custom' },
   { value: 'manual', label: 'Manual' },
 ];
-const COLORS = ['#D97757', '#4F7DF0', '#3C9A6B', '#8B6FD6', '#D9609A', '#2A9D9A', '#E0A12B', '#8A8782'];
+const COLORS = [
+  '#D97757', '#E0894B', '#E05A47', '#E0A12B', '#EAB308', '#F59E0B',
+  '#84CC16', '#6BA368', '#3FA796', '#2A9D9A', '#10B981', '#06B6D4',
+  '#0EA5E9', '#3B82F6', '#5B8DEF', '#4F7DF0', '#6366F1', '#8E7CC3',
+  '#8B5CF6', '#A855F7', '#D96C9B', '#EC4899', '#F43F5E', '#FB7185',
+  '#8A8782', '#64748B', '#475569', '#334155',
+];
 
 function SubForm({ sub, onClose }) {
   const { toast } = useToast();
@@ -127,13 +133,42 @@ function SubForm({ sub, onClose }) {
         <CategoryPicker value={categoryId} onChange={setCategoryId} />
       </div>
       <div>
-        <span className="label">Colour</span>
-        <div className="flex flex-wrap gap-2.5" role="group" aria-label="Colour">
+        <div className="flex items-center justify-between mb-2">
+          <span className="label !mb-0">Colour</span>
+          <span className="text-xs text-muted font-mono uppercase">{color}</span>
+        </div>
+        <div className="flex flex-wrap gap-2.5 max-h-36 overflow-y-auto pr-1" role="group" aria-label="Colour">
           {COLORS.map((c) => (
-            <button type="button" key={c} onClick={() => setColor(c)} aria-label={`Colour ${c}`} aria-pressed={color === c} className={`grid h-11 w-11 place-items-center rounded-full ring-offset-2 ring-offset-bg ${color === c ? 'ring-2 ring-ink' : ''}`} style={{ background: c }}>
-              {color === c && <CheckCircle2 size={18} className="text-white mix-blend-difference" />}
+            <button
+              type="button"
+              key={c}
+              onClick={() => setColor(c)}
+              aria-label={`Colour ${c}`}
+              aria-pressed={color === c}
+              className={`grid h-9 w-9 place-items-center rounded-full ring-offset-2 ring-offset-bg active:scale-95 ${
+                color === c ? 'ring-2 ring-ink' : ''
+              }`}
+              style={{ background: c }}
+            >
+              {color === c && <CheckCircle2 size={16} className="text-white mix-blend-difference" />}
             </button>
           ))}
+          <label
+            className={`relative grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-dashed border-muted text-xs font-semibold text-muted ring-offset-2 ring-offset-bg ${
+              !COLORS.includes(color) ? 'ring-2 ring-ink' : ''
+            }`}
+            style={!COLORS.includes(color) ? { background: color, color: 'white' } : undefined}
+            title="Custom colour"
+          >
+            <span aria-hidden>#</span>
+            <input
+              type="color"
+              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              value={color}
+              onChange={(e) => setColor(e.target.value.toUpperCase())}
+              aria-label="Custom hex colour"
+            />
+          </label>
         </div>
       </div>
       <Field label="Note (optional)">

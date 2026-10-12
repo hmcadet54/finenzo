@@ -39,6 +39,8 @@ export const schemas = {
               return false;
             }
           }, 'Unknown timezone'),
+          themeMode: z.enum(['light', 'dark', 'system']).optional(),
+          bg: z.string().regex(/^#[0-9a-fA-F]{6}$/).or(z.literal('')).optional(),
         })
         .partial()
         .optional(),
@@ -61,6 +63,8 @@ export const schemas = {
     label: text(120).min(1),
     date: dateStr.optional(),
     categoryId: optionalId,
+    subscriptionId: optionalId,
+    source: z.enum(['manual', 'subscription', 'loan', 'import']).optional(),
     note: text(500).optional(),
   }),
   expensePatch: z.object({
@@ -68,6 +72,8 @@ export const schemas = {
     label: text(120).min(1).optional(),
     date: dateStr.optional(),
     categoryId: optionalId,
+    subscriptionId: optionalId,
+    source: z.enum(['manual', 'subscription', 'loan', 'import']).optional(),
     note: text(500).optional(),
   }),
   expenseQuery: z.object({

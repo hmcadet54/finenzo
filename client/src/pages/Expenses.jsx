@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FileText, Filter, Plus, Receipt, Search, Wallet } from 'lucide-react';
 import { useCycle } from '../context/CycleContext.jsx';
-import { api, useCategories, useExpenses, useIncome } from '../lib/queries.js';
+import { api, useCategories, useExpenses, useIncome, useSubscriptions } from '../lib/queries.js';
 import { dayHeading } from '../lib/dates.js';
 import { useUndoDelete, useHiddenIds } from '../lib/undo.js';
-import { CategoryDot, DatePicker, EmptyState, ErrorState, ListSkeleton, Money, PageHeader, Segmented } from '../components/ui.jsx';
+import { CategoryDot, DatePicker, EmptyState, ErrorState, ListSkeleton, Money, PageHeader, Segmented, SubscriptionTag } from '../components/ui.jsx';
 import SwipeRow from '../components/SwipeRow.jsx';
 import { useQuickAdd } from '../components/Layout.jsx';
 import ExpenseSheet from '../forms/ExpenseSheet.jsx';
@@ -28,6 +28,9 @@ export default function Expenses() {
   const undo = useUndoDelete();
   const hidden = useHiddenIds();
   const { data: cats = [] } = useCategories();
+  const { data: subsData } = useSubscriptions();
+  const subs = subsData?.items ?? [];
+  const subOf = (id) => subs.find((s) => s.id === id);
   const [tab, setTab] = useState('expenses');
   const [q, setQ] = useState('');
   const [debouncedQ, setDebouncedQ] = useState('');
@@ -95,13 +98,23 @@ export default function Expenses() {
           </div>
           {showFilters && (
             <div className="card space-y-3 p-4">
-              <div className="-mx-1 flex gap-2 overflow-x-auto px-1 no-scrollbar" role="group" aria-label="Filter by category">
-                <button className="chip" aria-pressed={!categoryId} onClick={() => setCategoryId('')}>All</button>
-                {cats.map((c) => (
-                  <button key={c.id} className="chip" aria-pressed={categoryId === c.id} onClick={() => setCategoryId(c.id)}>
-                    <span aria-hidden>{c.icon}</span> {c.name}
-                  </button>
-                ))}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="label !mb-0 text-xs font-semibold uppercase tracking-wider">Category</span>
+                  {categoryId && (
+                    <button className="text-xs text-accent font-semibold hover:underline" onClick={() => setCategoryId('')}>
+                      Show all
+                    </button>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1" role="group" aria-label="Filter by category">
+                  <button className="chip !min-h-[34px] !px-3 text-xs" aria-pressed={!categoryId} onClick={() => setCategoryId('')}>All</button>
+                  {cats.map((c) => (
+                    <button key={c.id} className="chip !min-h-[34px] !px-3 text-xs" aria-pressed={categoryId === c.id} onClick={() => setCategoryId(c.id)}>
+                      <span aria-hidden>{c.icon}</span> {c.name}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -145,10 +158,21 @@ export default function Expenses() {
                       <div className="flex min-h-[64px] items-center gap-3 px-4 py-3 lg:pr-14">
                         <CategoryDot category={catOf(e.categoryId)} />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate font-medium">{e.label}</p>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="truncate font-medium">{e.label}</p>
+                            {(e.subscriptionId || e.source === 'subscription') && (
+                              <SubscriptionTag
+                                subscription={subOf(e.subscriptionId)}
+                                name={subOf(e.subscriptionId)?.name || (e.source === 'subscription' ? 'Subscription' : undefined)}
+                                isPaid={true}
+                              />
+                            )}
+                          </div>
                           <p className="truncate text-sm text-muted">
                             {catOf(e.categoryId)?.name ?? 'Uncategorised'}
-                            {e.source !== 'manual' && <span className="badge ml-2 bg-surface-2 text-muted">{e.source}</span>}
+                            {e.source !== 'manual' && e.source !== 'subscription' && (
+                              <span className="badge ml-2 bg-surface-2 text-muted">{e.source}</span>
+                            )}
                             {e.note ? ` · ${e.note}` : ''}
                           </p>
                         </div>

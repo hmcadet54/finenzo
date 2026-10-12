@@ -182,7 +182,10 @@ export default function Dashboard() {
                 {upcoming.due.map((d) => (
                   <div key={d.chargeId} className="flex items-center gap-3 px-4 py-3">
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium">{d.name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="truncate font-medium">{d.name}</p>
+                        <span className="clay-tag bg-warn-soft text-warn border border-warn/40 text-[11px] font-bold">Due</span>
+                      </div>
                       <p className="text-sm text-warn">Was due {niceDate(d.date)}</p>
                     </div>
                     <Money value={d.amount} className="font-semibold" />

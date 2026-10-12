@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { Category, Cycle, Expense, Income, SubscriptionCharge } from '../models.js';
+import { Category, Cycle, Expense, Income, Subscription, SubscriptionCharge } from '../models.js';
 import { ApiError, notFound, parse } from '../http.js';
 import { objectId, schemas } from '../schemas.js';
 import { parseNoteBlock } from '../lib/noteParser.js';
@@ -14,6 +14,13 @@ async function resolveCategory(userId, categoryId) {
   const cat = await Category.exists({ _id: categoryId, userId });
   if (!cat) throw new ApiError(400, 'BAD_CATEGORY', 'Unknown category');
   return categoryId;
+}
+
+async function resolveSubscription(userId, subscriptionId) {
+  if (!subscriptionId) return null;
+  const sub = await Subscription.exists({ _id: subscriptionId, userId });
+  if (!sub) throw new ApiError(400, 'BAD_SUBSCRIPTION', 'Unknown subscription');
+  return subscriptionId;
 }
 
 router.get('/', async (req, res) => {
@@ -72,6 +79,8 @@ router.post('/', async (req, res) => {
   const b = parse(schemas.expenseCreate, req.body);
   const date = b.date ?? req.today;
   const cycle = await ensureCycleForDate(req.user, date);
+  const subscriptionId = b.subscriptionId ? await resolveSubscription(req.userId, b.subscriptionId) : null;
+  const source = subscriptionId ? 'subscription' : (b.source ?? 'manual');
   const expense = await Expense.create({
     userId: req.userId,
     cycleId: cycle._id,
@@ -79,6 +88,8 @@ router.post('/', async (req, res) => {
     label: b.label,
     date,
     categoryId: await resolveCategory(req.userId, b.categoryId),
+    subscriptionId,
+    source,
     note: b.note ?? '',
   });
   res.status(201).json({ item: expense });
@@ -90,6 +101,14 @@ router.patch('/:id', async (req, res) => {
   const expense = await Expense.findOne({ _id: id, userId: req.userId });
   if (!expense) throw notFound('Expense');
   if (b.categoryId !== undefined) b.categoryId = await resolveCategory(req.userId, b.categoryId);
+  if (b.subscriptionId !== undefined) {
+    b.subscriptionId = b.subscriptionId ? await resolveSubscription(req.userId, b.subscriptionId) : null;
+    if (b.subscriptionId) {
+      b.source = 'subscription';
+    } else if (expense.source === 'subscription') {
+      b.source = 'manual';
+    }
+  }
   Object.assign(expense, b);
   if (b.date) expense.cycleId = (await ensureCycleForDate(req.user, b.date))._id;
   await expense.save();
