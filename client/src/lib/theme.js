@@ -262,10 +262,45 @@ export function applyTheme({ mode, bg, accent, presetId, persist = true } = {}) 
   s.setProperty('--accent-text', triple(tokens.text));
   s.setProperty('--on-accent', triple(tokens.onAccent));
 
-  if (tokens.isDark) {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
+  if (typeof document !== 'undefined') {
+    if (tokens.isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    const hexBg = rgbToHex(tokens.bg);
+    const colorScheme = tokens.isDark ? 'dark' : 'light';
+
+    // 1. Sync mobile status bar & navigation panel theme-color (Android Chrome, PWA, Safari)
+    const themeColorMetas = document.querySelectorAll('meta[name="theme-color"]');
+    if (themeColorMetas.length > 0) {
+      themeColorMetas.forEach((m) => {
+        m.removeAttribute('media');
+        m.setAttribute('content', hexBg);
+      });
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'theme-color';
+      meta.content = hexBg;
+      document.head.appendChild(meta);
+    }
+
+    // 2. Sync color-scheme so OS knows icons/time/battery should be light or dark
+    let metaColorScheme = document.querySelector('meta[name="color-scheme"]');
+    if (!metaColorScheme) {
+      metaColorScheme = document.createElement('meta');
+      metaColorScheme.name = 'color-scheme';
+      document.head.appendChild(metaColorScheme);
+    }
+    metaColorScheme.setAttribute('content', colorScheme);
+    document.documentElement.style.colorScheme = colorScheme;
+
+    // 3. Sync iOS status bar style for standalone/installed web apps
+    let metaApple = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    if (metaApple) {
+      metaApple.setAttribute('content', tokens.isDark ? 'black-translucent' : 'default');
+    }
   }
 
   if (persist) {
